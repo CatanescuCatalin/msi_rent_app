@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container } from 'native-base';
-import { StyleSheet, View, TouchableOpacity, Text, Icon } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Icon, ActivityIndicator } from 'react-native';
 import StatusBarBackground from './StatusBarBackground';
 import OptionsHeader from './OptionsHeader';
 import AppliedFilters from './AppliedFilters';
@@ -9,8 +9,13 @@ import FilterList from "./FilterList"
 import { AntDesign } from '@expo/vector-icons';
 import FilterModalItem from './FilterModalItem';
 import _ from 'lodash';
+import URL_API from "../../config";
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center'
+  },
 
   headerModal: {
     flexDirection: 'row',
@@ -78,20 +83,19 @@ export default class CarListScreen extends Component {
 
     appliedFiltersList: [],
 
-    carList: [
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-      { pachet: "GREEN", title: "Mercedes cls", url: "https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_large/v1/editorial/2018-mercedes-benz-cls450-sedan-grey-richard-berry-1200x800-%283%29.JPG", content: "Lorem ipsum dolor sit amet" },
-    ]
+    carList: [],
+    loading: true
   };
+
+  async componentDidMount() {
+    try {
+        const carsApiCall = await fetch(URL_API + '/api/cars');
+        const cars = await carsApiCall.json();
+        this.setState({carList: cars, loading: false});
+    } catch(err) {
+        console.log("Error fetching data-----------", err);
+      }
+  }
 
   _toggleModalFilterList = () => {
     this.setState({ isModalFilterListVisible: !this.state.isModalFilterListVisible });
@@ -151,24 +155,32 @@ export default class CarListScreen extends Component {
   }
 
   render() {
-    return (
-      <Container>
-        <StatusBarBackground />
-        <OptionsHeader toggleModal={this._toggleModalFilterList} navigation={this.props.navigation}/>
-        <AppliedFilters 
-          appliedFiltersList={this.state.appliedFiltersList}
-          carList={this.state.carList}
-          removeApliedFilter={this._removeApliedFilter}
-         />
-        <Modal isVisible={this.state.isModalFilterListVisible}>
-          {this._renderModalFilterListContent()}
-        </Modal>
-
-        <Modal isVisible={this.state.isModalFilterItemVisible}>
-          {this._renderModalFilterItemContent()}
-        </Modal>
-
-      </Container>
-    )
+    if(this.state.loading){
+      return(
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )
+    }else{
+      return (
+        <Container>
+          <StatusBarBackground />
+          <OptionsHeader toggleModal={this._toggleModalFilterList} navigation={this.props.navigation}/>
+          <AppliedFilters navigation={this.props.navigation}
+            appliedFiltersList={this.state.appliedFiltersList}
+            carList={this.state.carList}
+            removeApliedFilter={this._removeApliedFilter}
+           />
+          <Modal isVisible={this.state.isModalFilterListVisible}>
+            {this._renderModalFilterListContent()}
+          </Modal>
+  
+          <Modal isVisible={this.state.isModalFilterItemVisible}>
+            {this._renderModalFilterItemContent()}
+          </Modal>
+  
+        </Container>
+      )
+    }
   }
 }

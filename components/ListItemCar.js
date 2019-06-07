@@ -6,7 +6,7 @@ class ListItemCar extends React.Component {
   render() {
     return this.props.carList.map(
         (car) => (
-            <CarItem navigation={this.props.navigation} key={car.id} car={car}/>
+            <CarItem navigation={this.props.navigation} key={car._id} car={car}/>
         ) 
     );
   }

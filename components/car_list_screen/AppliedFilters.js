@@ -57,7 +57,7 @@ export default class AppliedFilters extends Component {
                         filterList={this.state.appliedFiltersList} />
                 </ScrollView>
             </View>
-            <CarList carList={this.props.carList}/>
+            <CarList navigation={this.props.navigation} carList={this.props.carList}/>
         </Container>
     )
   }

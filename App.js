@@ -1,13 +1,10 @@
 import React from 'react';
-import { Text, View, Button } from 'react-native';
 import { createBottomTabNavigator, createAppContainer,  createStackNavigator, createSwitchNavigator} from 'react-navigation';
 import CarScreen from './components/CarScreen';
 import ProfileScreen from './components/ProfileScreen';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import CarDetails from "./components/CarDetails";
 import AuthenticationScreen from './components/AuthenticationScreen'
-import AuthLoadingScreen from './components/AuthLoadingScreen'
-import StatusBarBackground from './components/car_list_screen/StatusBarBackground'
 import CarListScreen from'./components/car_list_screen/CarListScreen'
 import RegisterScreen from './components/RegisterScreen'
 
@@ -57,10 +54,12 @@ const switchNavigator = createSwitchNavigator(
     
     ProfileScreen: ProfileScreen, 
 
-    RegisterScreen: RegisterScreen
+    RegisterScreen: RegisterScreen,
+
+    CarDetails: CarDetails
   },
   {
-    initialRouteName: 'ProfileScreen', 
+    initialRouteName: 'AuthenticationScreen', 
   }
 );
 

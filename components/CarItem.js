@@ -2,10 +2,6 @@ import React from 'react';
 import { Text, View, Image, StyleSheet, Button } from 'react-native';
 
 class ListItemCar extends React.Component {
-
-    click(){
-        console.log("merge");
-    }
     render() {
         const car = this.props.car;
         return (
