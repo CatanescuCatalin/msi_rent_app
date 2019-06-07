@@ -25,11 +25,7 @@ export default class FilterListItem extends Component {
   render() {
     return (
       <View>
-        <View style={styles.elementFilter}>
-            <TouchableOpacity onPress={() => this.props.openModalFilterItem(this.state.filter)}>
-                <Text style={styles.textItem}> > {this.state.filter.label} </Text>
-          </TouchableOpacity>
-        </View>
+
       </View>
     )
   }

@@ -145,7 +145,6 @@ export default class CarList extends Component {
             this.props.navigation.navigate("CarDetails", {
               carId: item._id
             })
-            console.log("details");
           }
           }
         />

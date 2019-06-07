@@ -47,7 +47,6 @@ export default class AppliedFilters extends Component {
         <Container style={styles.container}>
             <View style={styles.containerText}>
                 <Text style={styles.filterAppliedLabel}>Filtre Aplicate: {this.state.appliedFiltersList.length}</Text>
-                <Text style={styles.resultsFilters}>Rezultate Obtinute: *to be</Text>
             </View>
 
             <View style={styles.filterListStyle}>

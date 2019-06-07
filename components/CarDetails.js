@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, Button } from "react-native";
+import { Image, StyleSheet, Button, ActivityIndicator } from "react-native";
 import {
   Container,
   Header,
@@ -18,38 +18,81 @@ import {
 
 import URL_API from "../config";
 
+import StatusBarBackground from './car_list_screen/StatusBarBackground'
+
 class CarDetails extends React.Component {
+  state = {
+    loading: true,
+    car:{},
+  };
+
+  async componentDidMount() {
+    try {
+      const { navigation } = this.props;
+      const carId = navigation.getParam("carId");
+
+      const carsApiCall = await fetch(URL_API + "/api/car/" + carId);
+      const cars = await carsApiCall.json();
+      this.setState({ car: cars, loading: false  });
+
+    } catch (err) {
+      console.log("Error fetching data-----------", err);
+    }
+  }
+
   render() {
 
-    const { navigation } = this.props;
-    const carId = navigation.getParam("carId");
+      var urlImageTitle = URL_API + "/" + this.state.car.ImageUrl;
+      var auxCards = [
+        {
+          image: { uri: urlImageTitle + "1.jpg" }
+        },
 
-    var urlImageTitle = URL_API + "/" + carId.ImageUrl;
-    var cards = [
-      {
-        image: { uri: urlImageTitle + "1.jpg" }
-      },
+        {
+          image: { uri: urlImageTitle + "2.jpg" }
+        },
 
-      {
-        image: { uri: urlImageTitle + "2.jpg" }
-      }
-    ];
+        {
+          image: { uri: urlImageTitle + "3.jpg" }
+        },
 
-    return (
-      <View>
-        <DeckSwiper
-          dataSource={cards}
-          renderItem={item => (
-            <Card style={{ elevation: 1 }}>
-              <CardItem cardBody>
-                <Image style={{ height: 300, flex: 1 }} source={item.image} />
-              </CardItem>
-            </Card>
-          )}
-        />
-      </View>
-    );
+        {
+          image: { uri: urlImageTitle + "4.jpg" }
+        },
+
+        {
+          image: { uri: urlImageTitle + "5.jpg" }
+        }
+      ];
+
+      console.log(auxCards);
+
+    if (this.state.loading) {
+      return (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <StatusBarBackground/>
+          
+          <DeckSwiper
+            dataSource={auxCards}
+            renderItem={item => (
+              <Card style={{ elevation: 1 }}>
+                <CardItem cardBody>
+                  <Image style={{ height: 300, flex: 1 }} source={item.image} />
+                </CardItem>
+              </Card>
+            )}
+          />
+        </View>
+      );
+    }
   }
 }
 
 export default CarDetails;
+
