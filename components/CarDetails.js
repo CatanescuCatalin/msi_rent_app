@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Button, ActivityIndicator } from "react-native";
+import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import {
   Container,
   Header,
@@ -19,6 +20,7 @@ import {
 import URL_API from "../config";
 
 import StatusBarBackground from './car_list_screen/StatusBarBackground'
+import { ScrollView } from "react-native-gesture-handler";
 
 class CarDetails extends React.Component {
   state = {
@@ -76,18 +78,30 @@ class CarDetails extends React.Component {
     } else {
       return (
         <View>
+        
           <StatusBarBackground/>
+
+            <Button title="Back" onPress={() => this.props.navigation.navigate("App")} />
+              <View style={{height: 200, borderBottomWidth: 1,  borderColor: "black"}}>
+
+              <DeckSwiper
+                dataSource={auxCards}
+                renderItem={item => (
+                <Card style={{ elevation: 1 }}>
+                  <CardItem cardBody>
+                    <Image style={{ height: 200, flex: 1 }} source={item.image} />
+                  </CardItem>
+                </Card>
+                )}
+              />
+
+            </View>
+
+            <Calendar />
+
+            <Button title="Pay" onPress={() => this.props.navigation.navigate("Paylink")} />
+
           
-          <DeckSwiper
-            dataSource={auxCards}
-            renderItem={item => (
-              <Card style={{ elevation: 1 }}>
-                <CardItem cardBody>
-                  <Image style={{ height: 300, flex: 1 }} source={item.image} />
-                </CardItem>
-              </Card>
-            )}
-          />
         </View>
       );
     }
@@ -96,3 +110,5 @@ class CarDetails extends React.Component {
 
 export default CarDetails;
 
+
+  

@@ -7,6 +7,7 @@ import CarDetails from "./components/CarDetails";
 import AuthenticationScreen from './components/AuthenticationScreen'
 import CarListScreen from'./components/car_list_screen/CarListScreen'
 import RegisterScreen from './components/RegisterScreen'
+import Paylink from './components/Paylink'
 
 
 const CarDetailsStack = createStackNavigator({
@@ -56,7 +57,9 @@ const switchNavigator = createSwitchNavigator(
 
     RegisterScreen: RegisterScreen,
 
-    CarDetails: CarDetails
+    CarDetails: CarDetails,
+
+    Paylink : Paylink
   },
   {
     initialRouteName: 'AuthenticationScreen', 
