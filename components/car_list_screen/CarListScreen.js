@@ -184,6 +184,8 @@ export default class CarListScreen extends Component {
       }
     }
 
+    filteredCarsAux = [...new Set(filteredCarsAux)];
+
     if (arrApliedFilters.length === 0){
       this.setState({filteredCars: this.state.carList})
     } else {
