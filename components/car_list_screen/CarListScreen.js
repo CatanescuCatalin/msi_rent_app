@@ -122,7 +122,9 @@ export default class CarListScreen extends Component {
             marginRight: 10
           }}
         >
-          <Text style={{ color: "#C4161C" }}>Sterge Filtre</Text>
+          <TouchableOpacity onPress={this._removeFilters}>
+            <Text style={{ color: "#C4161C" }}>Sterge Filtre</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -148,6 +150,11 @@ export default class CarListScreen extends Component {
       </ScrollView>
     </View>
   );
+
+  _removeFilters = () => {
+    this.setState({appliedFiltersList: []});
+    this._toggleModalFilterList();
+  };
 
   _removeApliedFilter = filter => {
     var arr = this.state.appliedFiltersList;
