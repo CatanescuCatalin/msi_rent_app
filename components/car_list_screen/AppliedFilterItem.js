@@ -44,7 +44,7 @@ export default class AppliedFilterItem extends Component {
         </Text>
 
         <View style={styles.removeButton}> 
-          <TouchableOpacity onPress={() => this.props.removeApliedFilter(this.state.filter)}>
+          <TouchableOpacity onPress={() => this.props.removeApliedFilter(this.state.filter.label)}>
             <Ionicons name="ios-close-circle" size={20} color="white" />
           </TouchableOpacity>
         </View>

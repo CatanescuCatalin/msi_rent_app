@@ -28,7 +28,7 @@ export default class CarListScreen extends Component {
     filterList: [
       {
         label: "Brand",
-        child: ["BWM", "Mercedes"]
+        child: ["BMW", "Mercedes Benz"]
       },
       {
         label: "Combustibil",
@@ -36,23 +36,20 @@ export default class CarListScreen extends Component {
       },
       {
         label: "Volum",
-        child: ["Volum: 100", "Volum: 200", "Volum: 300"]
+        child: ["100", "200", "300"]
       },
       {
         label: "Numar de locuri",
-        child: ["Numar locuri: 4", "Numar locuri: 5", "Numar locuri: 8"]
+        child: ["4", "5", "8"]
       },
       {
         label: "Cutie de viteze",
         child: ["Automata", "Manuala"]
-      },
-      {
-        label: "Pachet",
-        child: ["Green", "Red", "Black"]
       }
     ],
 
     appliedFiltersList: [],
+    filteredCars: [],
 
     carList: [],
     loading: true
@@ -63,6 +60,7 @@ export default class CarListScreen extends Component {
       const carsApiCall = await fetch(URL_API + "/api/cars");
       const cars = await carsApiCall.json();
       this.setState({ carList: cars, loading: false });
+      this.setState({ filteredCars: cars });
     } catch (err) {
       console.log("Error fetching data-----------", err);
     }
@@ -78,9 +76,29 @@ export default class CarListScreen extends Component {
     console.log("profile");
   }
 
-  _addFilters = (child) => { 
-    var joined = this.state.appliedFiltersList.concat({ label: child });
-    this.setState({ appliedFiltersList: joined });
+  _addFilters = child => {
+    var arr = this.state.appliedFiltersList;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].label === child) {
+        arr.splice(i, 1);
+      }
+    }
+
+    if (arr.length === 0) {
+      var joined = this.state.appliedFiltersList.concat({ label: child });
+      this.setState({ appliedFiltersList: joined }, () => {
+        this._filterCars();
+      });
+    } else {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i].label !== child) {
+          var joined = this.state.appliedFiltersList.concat({ label: child });
+          this.setState({ appliedFiltersList: joined }, () => {
+            this._filterCars();
+          });
+        }
+      }
+    }
   };
 
   _renderModalFilterListContent = () => (
@@ -88,7 +106,7 @@ export default class CarListScreen extends Component {
       <View style={styles.headerModal}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <TouchableOpacity onPress={this._toggleModalFilterList}>
-            <Text style={{ fontSize: 25 }}>X</Text>
+            <Text style={{ fontSize: 30 }}>X</Text>
           </TouchableOpacity>
           <Text style={{ fontSize: 30, marginLeft: 15, marginTop: 10 }}>
             Aplica Filtre
@@ -132,13 +150,38 @@ export default class CarListScreen extends Component {
   );
 
   _removeApliedFilter = filter => {
-    var temp_array = _.remove(this.state.appliedFiltersList, function(
-      myfilter
-    ) {
-      return filter.label == myfilter.label;
-    });
+    var arr = this.state.appliedFiltersList;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].label === filter) {
+        arr.splice(i, 1);
+      }
+    }
 
-    this.setState({ appliedFiltersList: temp_array });
+    this.setState({ appliedFiltersList: arr }, () => {
+      this._filterCars();
+    });
+  };
+
+  _filterCars = () => {
+    var arrApliedFilters = this.state.appliedFiltersList;
+    var arrCarList = this.state.carList;
+    var filteredCarsAux = []
+
+    for (var ic = 0; ic < arrCarList.length; ic++) {
+      for (var iAF = 0; iAF < arrApliedFilters.length; iAF++) {
+        Object.values(arrCarList[ic]).forEach(value => {
+          if (value === arrApliedFilters[iAF].label) {
+            filteredCarsAux.push(arrCarList[ic]);
+          }
+        });
+      }
+    }
+
+    if (arrApliedFilters.length === 0){
+      this.setState({filteredCars: this.state.carList})
+    } else {
+      this.setState({filteredCars: filteredCarsAux})
+    }
   };
 
   render() {
@@ -159,7 +202,7 @@ export default class CarListScreen extends Component {
           <AppliedFilters
             navigation={this.props.navigation}
             appliedFiltersList={this.state.appliedFiltersList}
-            carList={this.state.carList}
+            carList={this.state.filteredCars}
             removeApliedFilter={this._removeApliedFilter}
           />
           <Modal isVisible={this.state.isModalFilterListVisible}>
