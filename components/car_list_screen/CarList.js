@@ -79,7 +79,11 @@ const styles = StyleSheet.create({
 
 export default class CarList extends Component {
   _renderHeader(item, expanded) {
-    var urlImageTitle = URL_API + "/" + item.ImageUrl + "1.jpg";
+    //var urlImageTitle = URL_API + "/" + item.ImageUrl + "1.jpg";
+
+    
+    var urlImageTitle = `${URL_API}/${item._id}/1.jpg`
+
     return (
       <View
         style={

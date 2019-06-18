@@ -1,15 +1,18 @@
 import React from 'react';
+import URL_API from "../config";
 import { Text, View, Image, StyleSheet, Button } from 'react-native';
 
 class ListItemCar extends React.Component {
+
     render() {
         const car = this.props.car;
+        url = `${URL_API}/${car.id}/1.jpg`
         return (
             <View style={styles.container}>
-                <Image style={styles.imageStyle} source={{ uri: car.url }}
+                <Image style={styles.imageStyle} source={{ uri: url }}
                 />
                 <View style={styles.container1}>
-                    <Text>Marca: {car.marca}</Text>
+                    <Text>Marcaaa: {car.marca}</Text>
                     <Text>Model: {car.model}</Text>
                 </View>
 

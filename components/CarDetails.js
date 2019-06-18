@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, Button, ActivityIndicator } from "react-native";
+import { Image, StyleSheet, Button, ActivityIndicator, ScrollView } from "react-native";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import {
   Container,
@@ -20,13 +20,18 @@ import {
 import URL_API from "../config";
 
 import StatusBarBackground from './car_list_screen/StatusBarBackground'
-import { ScrollView } from "react-native-gesture-handler";
 
 class CarDetails extends React.Component {
   state = {
     loading: true,
     car:{},
+    selected: ''
   };
+
+  constructor(props) {
+    super(props);
+    this.onDayPress = this.onDayPress.bind(this);
+  }
 
   async componentDidMount() {
     try {
@@ -42,9 +47,16 @@ class CarDetails extends React.Component {
     }
   }
 
+  onDayPress(day) {
+    this.setState({
+      selected: day.dateString
+    });
+    console.log(this.state);
+  }
+
   render() {
 
-      var urlImageTitle = URL_API + "/" + this.state.car.ImageUrl;
+      var urlImageTitle = URL_API + "/" + this.state.car._id + '/';
       var auxCards = [
         {
           image: { uri: urlImageTitle + "1.jpg" }
@@ -67,8 +79,6 @@ class CarDetails extends React.Component {
         }
       ];
 
-      console.log(auxCards);
-
     if (this.state.loading) {
       return (
         <View style={{ flex: 1, justifyContent: "center" }}>
@@ -77,7 +87,7 @@ class CarDetails extends React.Component {
       );
     } else {
       return (
-        <View>
+        <ScrollView>
         
           <StatusBarBackground/>
 
@@ -96,13 +106,20 @@ class CarDetails extends React.Component {
               />
 
             </View>
+              <Calendar 
+                onDayPress={this.onDayPress}
+                hideExtraDays
+                showWeekNumbers
+                markedDates={{[this.state.selected]: {selected: true}}}
+               
+              />
 
-            <Calendar />
-
-            <Button title="Pay" onPress={() => this.props.navigation.navigate("Paylink")} />
-
+              <Button title="Pay" onPress={() => this.props.navigation.navigate("Paylink",{
+                    car: this.state.car,
+                    date: this.state.selected
+              })} />
           
-        </View>
+        </ScrollView>
       );
     }
   }
