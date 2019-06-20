@@ -51,7 +51,6 @@ class CarDetails extends React.Component {
     this.setState({
       selected: day.dateString
     });
-    console.log(this.state);
   }
 
   render() {

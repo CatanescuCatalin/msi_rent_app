@@ -7,7 +7,8 @@ import {
   Text,
   Icon,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
+  AsyncStorage
 } from "react-native";
 import StatusBarBackground from "./StatusBarBackground";
 import OptionsHeader from "./OptionsHeader";
@@ -28,7 +29,7 @@ export default class CarListScreen extends Component {
     filterList: [
       {
         label: "Brand",
-        child: ["BMW", "Mercedes Benz"]
+        child: ["BMW", "Mercedes Benz", "Dacia"]
       },
       {
         label: "Combustibil",
@@ -36,11 +37,11 @@ export default class CarListScreen extends Component {
       },
       {
         label: "Volum",
-        child: ["100", "200", "300"]
+        child: ["700", "400", "300", "500"]
       },
       {
         label: "Numar de locuri",
-        child: ["4", "5", "8"]
+        child: ["4", "5"]
       },
       {
         label: "Cutie de viteze",
@@ -57,6 +58,7 @@ export default class CarListScreen extends Component {
 
   async componentDidMount() {
     try {
+      this._retrieveData()
       const carsApiCall = await fetch(URL_API + "/api/cars");
       const cars = await carsApiCall.json();
       this.setState({ carList: cars, loading: false });
@@ -65,6 +67,17 @@ export default class CarListScreen extends Component {
       console.log("Error fetching data-----------", err);
     }
   }
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('user');
+      if (value !== null) {
+        
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
   _toggleModalFilterList = () => {
     this.setState({
