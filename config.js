@@ -1,3 +1,3 @@
-const URL_API = "http://7a45a663.ngrok.io"
+const URL_API = "http://4ba913fa.ngrok.io"
 
 export default URL_API;

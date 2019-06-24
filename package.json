@@ -13,6 +13,7 @@
     "native-base": "^2.11.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-calendar-picker": "^6.0.1",
     "react-native-calendars": "^1.187.0",
     "react-native-collapsible": "^1.4.0",
     "react-native-credit-card-input": "^0.4.1",

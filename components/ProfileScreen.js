@@ -1,57 +1,120 @@
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import StatusBarBackground from './car_list_screen/StatusBarBackground';
-import MapViewScreen from './MapViewScreen'
+import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  AsyncStorage,
+  ActivityIndicator
+} from "react-native";
+import StatusBarBackground from "./car_list_screen/StatusBarBackground";
+import URL_API from "../config";
 
 const styles = StyleSheet.create({
-
-  container:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height:80
-
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 80
   },
 
   filterButton: {
-      marginLeft: 15,
-      marginTop: 20 
+    marginLeft: 15,
+    marginTop: 20
   },
 
   profileButton: {
     marginRight: 15,
     marginTop: 20
   }
-
 });
 
 class ProfileScreen extends React.Component {
+  state = {
+    isLoading: true,
+    hasCarReserved: false
+  };
+
+  async componentDidMount() {
+    this._retrieveData();
+  }
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("user");
+      if (value !== null) {
+        await this._fetchUserInfo(JSON.parse(value).userName);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  _fetchUserInfo = async userName => {
+    fetch(URL_API + "/api/userinfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userName: userName
+      })
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({isLoading: false})
+        if(responseJson.car){
+          this.setState({hasCarReserved: true})
+        }
+        console.log(responseJson);
+      }); 
+  };
+
   render() {
-    return (
-      <View>
-        <StatusBarBackground />
-        
+    if (this.state.isLoading) {
+
+      return (
+        <View style={{flex: 1, justifyContent: "center"}}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+      
+    } else {
+      return (
+        <View>
+          <StatusBarBackground />
+
           <View style={styles.container}>
-            
-            <View style={styles.filterButton} >
-              <TouchableOpacity  onPress={()=> {this.props.navigation.navigate("App"); }}>
+            <View style={styles.filterButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.props.navigation.navigate("App");
+                }}
+              >
                 <Ionicons name="ios-options" size={40} color="black" />
-              </TouchableOpacity >
+              </TouchableOpacity>
             </View>
-          
-          <View style={styles.profileButton} >
-            <TouchableOpacity  onPress={()=> this.props.navigation.navigate("ProfileScreen") }>
-              <Ionicons name="ios-person" size={40} color="black" />
-            </TouchableOpacity>
+
+            <View style={styles.profileButton}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("ProfileScreen")}
+              >
+                <Ionicons name="ios-person" size={40} color="black" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        <View style={{height: 100 + "%"}}>
-          <MapViewScreen />
-        </View>
+          { this.state.hasCarReserved ? 
+            <View>
+              <Text>Are Marisa</Text>
+            </View> 
+          : 
+            <View>
+              <Text>Nu ai nicio masina rezervata</Text>
+            </View>
+          }
 
-      </View>
-    );
+        </View>
+      );
+    }
   }
 }
 

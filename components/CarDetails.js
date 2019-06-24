@@ -1,6 +1,12 @@
 import React from "react";
-import { Image, StyleSheet, Button, ActivityIndicator, ScrollView } from "react-native";
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import {
+  Image,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+  ScrollView
+} from "react-native";
+import CalendarPicker from "react-native-calendar-picker";
 import {
   Container,
   Header,
@@ -16,21 +22,24 @@ import {
   Left,
   Body
 } from "native-base";
+import MapViewScreen from "./MapViewScreen";
 
 import URL_API from "../config";
 
-import StatusBarBackground from './car_list_screen/StatusBarBackground'
+import StatusBarBackground from "./car_list_screen/StatusBarBackground";
 
 class CarDetails extends React.Component {
   state = {
     loading: true,
-    car:{},
-    selected: ''
+    car: {},
+    selectedStartDate: null,
+    selectedEndDate: null,
+    payButtonDisable: true
   };
 
   constructor(props) {
     super(props);
-    this.onDayPress = this.onDayPress.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
   }
 
   async componentDidMount() {
@@ -40,43 +49,56 @@ class CarDetails extends React.Component {
 
       const carsApiCall = await fetch(URL_API + "/api/car/" + carId);
       const cars = await carsApiCall.json();
-      this.setState({ car: cars, loading: false  });
-
+      this.setState({ car: cars, loading: false });
     } catch (err) {
       console.log("Error fetching data-----------", err);
     }
   }
 
-  onDayPress(day) {
-    this.setState({
-      selected: day.dateString
-    });
+  onDateChange(date, type) {
+    if (type === "END_DATE") {
+      this.setState({
+        selectedEndDate: date,
+        payButtonDisable: false
+      });
+    } else {
+      this.setState({
+        selectedStartDate: date,
+        selectedEndDate: null,
+        payButtonDisable: true
+      });
+    }
   }
 
   render() {
+    const { selectedStartDate, selectedEndDate } = this.state;
+    const minDate = new Date(); // Today
+    const maxDate = new Date(2019, 12, 12);
+    const startDate = selectedStartDate ? selectedStartDate.toString() : "";
+    const endDate = selectedEndDate ? selectedEndDate.toString() : "";
 
-      var urlImageTitle = URL_API + "/" + this.state.car._id + '/';
-      var auxCards = [
-        {
-          image: { uri: urlImageTitle + "1.jpg" }
-        },
+    var urlImageTitle = URL_API + "/" + this.state.car._id + "/";
+    var auxCards = [
+      {
+        image: { uri: urlImageTitle + "1.jpg" }
+      },
 
-        {
-          image: { uri: urlImageTitle + "2.jpg" }
-        },
+      {
+        image: { uri: urlImageTitle + "2.jpg" }
+      },
 
-        {
-          image: { uri: urlImageTitle + "3.jpg" }
-        },
+      {
+        image: { uri: urlImageTitle + "3.jpg" }
+      },
 
-        {
-          image: { uri: urlImageTitle + "4.jpg" }
-        },
+      {
+        image: { uri: urlImageTitle + "4.jpg" }
+      },
 
-        {
-          image: { uri: urlImageTitle + "5.jpg" }
-        }
-      ];
+      {
+        image: { uri: urlImageTitle + "5.jpg" }
+      }
+    ];
 
     if (this.state.loading) {
       return (
@@ -87,37 +109,64 @@ class CarDetails extends React.Component {
     } else {
       return (
         <ScrollView>
-        
-          <StatusBarBackground/>
+          <StatusBarBackground />
 
-            <Button title="Back" onPress={() => this.props.navigation.navigate("App")} />
-              <View style={{height: 200, borderBottomWidth: 1,  borderColor: "black"}}>
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <View style={{ width: 50 + "%" }}>
+              <Button
+                title="Back" 
+                color="black"
+                onPress={() => this.props.navigation.navigate("App")}
+              />
+            </View>
 
-              <DeckSwiper
-                dataSource={auxCards}
-                renderItem={item => (
+            <View style={{ width: 50 + "%" }}>
+              <Button
+                title="Pay"
+                disabled={this.state.payButtonDisable}
+                onPress={() =>
+                  this.props.navigation.navigate("Paylink", {
+                    car: this.state.car,
+                    selectedStartDate: this.state.selectedStartDate,
+                    selectedEndDate: this.state.selectedEndDate
+                  })
+                }
+              />
+            </View>
+          </View>
+
+          <View
+            style={{ height: 200, borderBottomWidth: 1, borderColor: "black" }}
+          >
+            <DeckSwiper
+              dataSource={auxCards}
+              renderItem={item => (
                 <Card style={{ elevation: 1 }}>
                   <CardItem cardBody>
-                    <Image style={{ height: 200, flex: 1 }} source={item.image} />
+                    <Image
+                      style={{ height: 200, flex: 1 }}
+                      source={item.image}
+                    />
                   </CardItem>
                 </Card>
-                )}
-              />
+              )}
+            />
+          </View>
 
-            </View>
-              <Calendar 
-                onDayPress={this.onDayPress}
-                hideExtraDays
-                showWeekNumbers
-                markedDates={{[this.state.selected]: {selected: true}}}
-               
-              />
+          <CalendarPicker
+            startFromMonday={true}
+            allowRangeSelection={true}
+            minDate={minDate}
+            maxDate={maxDate}
+            todayBackgroundColor="#f2e6ff"
+            selectedDayColor="#7300e6"
+            selectedDayTextColor="#FFFFFF"
+            onDateChange={this.onDateChange}
+          />
 
-              <Button title="Pay" onPress={() => this.props.navigation.navigate("Paylink",{
-                    car: this.state.car,
-                    date: this.state.selected
-              })} />
-          
+          <View style={{ height: 250 }}>
+            <MapViewScreen />
+          </View>
         </ScrollView>
       );
     }
@@ -125,6 +174,3 @@ class CarDetails extends React.Component {
 }
 
 export default CarDetails;
-
-
-  
