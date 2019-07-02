@@ -24,12 +24,10 @@ export default class CarListScreen extends Component {
 
   state = {
     isModalFilterListVisible: false,
-    isModalFilterItemVisible: false,
-    subFilterItem: [],
     filterList: [
       {
         label: "Brand",
-        child: ["BMW", "Mercedes Benz", "Dacia"]
+        child: ["BMW", "Mercedes Benz", "Dacia", "Nissan"]
       },
       {
         label: "Combustibil",
@@ -58,7 +56,6 @@ export default class CarListScreen extends Component {
 
   async componentDidMount() {
     try {
-      this._retrieveData()
       const carsApiCall = await fetch(URL_API + "/api/cars");
       const cars = await carsApiCall.json();
       this.setState({ carList: cars, loading: false });
@@ -68,26 +65,11 @@ export default class CarListScreen extends Component {
     }
   }
 
-  _retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('user');
-      if (value !== null) {
-        
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  };
-
   _toggleModalFilterList = () => {
     this.setState({
       isModalFilterListVisible: !this.state.isModalFilterListVisible
     });
   };
-
-  _onPressProfileButton() {
-    console.log("profile");
-  }
 
   _addFilters = child => {
     var arr = this.state.appliedFiltersList;
@@ -119,7 +101,7 @@ export default class CarListScreen extends Component {
       <View style={styles.headerModal}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <TouchableOpacity onPress={this._toggleModalFilterList}>
-            <Text style={{ fontSize: 30 }}>X</Text>
+            <Text style={{ fontSize: 30, padding: 15 }}>X</Text>
           </TouchableOpacity>
           <Text style={{ fontSize: 30, marginLeft: 15, marginTop: 10 }}>
             Aplica Filtre
@@ -145,13 +127,13 @@ export default class CarListScreen extends Component {
         {this.state.filterList.map(filter => {
           return (
             <View key={filter.label} style={styles.titleFilterContainer}>
-              <Text style={{ fontSize: 25 }}>{filter.label}</Text>
+              <Text style={{ fontSize: 25, backgroundColor: '#C4161C', color: "white" }}>{filter.label}</Text> 
               <View>
                 {filter.child.map(child => {
                   return (
-                    <View key={child} style={{ marginLeft: 10 }}>
+                    <View key={child} style={{ marginLeft: 10, borderRadius: 150/2, backgroundColor: "#64444D", margin: 5 }}>
                       <TouchableOpacity onPress={() => this._addFilters(child)}>
-                        <Text style={{ fontSize: 20 }}>{child}</Text>
+                        <Text style={{ fontSize: 20, margin: 2, marginLeft: 3, color: "white" }}>{child}</Text>
                       </TouchableOpacity>
                     </View>
                   );
@@ -254,7 +236,8 @@ const styles = StyleSheet.create({
   titleFilterContainer: {
     margin: 15,
     marginTop: 5,
-    borderWidth: 1,
-    borderColor: "black"
+    borderWidth: 2,
+    borderColor: "#C4161C",
+    borderRadius: 10
   }
 });

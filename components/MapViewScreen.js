@@ -4,7 +4,6 @@ import { MapView } from 'expo';
 let Marker = MapView.Marker;
 export default class MapViewScreen extends Component {
 
-
   render() {
     return (
         <MapView
@@ -16,10 +15,13 @@ export default class MapViewScreen extends Component {
           longitudeDelta: 0.0421,
         }}
         >
+
         <Marker
-          coordinate={{latitude: 44.319929,
-            longitude: 23.802197}}
+          coordinate={{latitude: parseFloat(this.props.car.Ncoordonate, 10),
+            longitude: parseFloat(this.props.car.Ecoordonate, 10)}}
+            title={this.props.car.Maker + " " + this.props.car.Model}
         />
+
         </MapView>
     );
   }

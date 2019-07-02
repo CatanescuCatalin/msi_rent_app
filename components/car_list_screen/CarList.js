@@ -96,6 +96,9 @@ export default class CarList extends Component {
           <Text style={styles.textTitle}>
             {item.Maker} {item.Model}
           </Text>
+          <Text style={styles.textTitle}>
+            Price: {item.Price} $
+          </Text>
         </View>
 
         {expanded ? (
@@ -143,7 +146,7 @@ export default class CarList extends Component {
         <View style={styles.itemDetail}>
           <MaterialIcons name="attach-money" size={40} color="white" />
           <Text style={styles.textItem}>---</Text>
-          <Text style={styles.textItem}>Price $$</Text>
+          <Text style={styles.textItem}>{item.Price}</Text>
         </View>
 
         <Button

@@ -34,12 +34,14 @@ class CarDetails extends React.Component {
     car: {},
     selectedStartDate: null,
     selectedEndDate: null,
-    payButtonDisable: true
+    payButtonDisable: true,
+    numberOfDaysForRent: null,
+    totalPrice: 0
   };
 
   constructor(props) {
     super(props);
-    this.onDateChange = this.onDateChange.bind(this);
+    this.onDateChange = this.onDateChange.bind(this); 
   }
 
   async componentDidMount() {
@@ -55,12 +57,21 @@ class CarDetails extends React.Component {
     }
   }
 
+  
   onDateChange(date, type) {
     if (type === "END_DATE") {
       this.setState({
         selectedEndDate: date,
         payButtonDisable: false
+      }, () => {
+        firstDay = new Date(this.state.selectedStartDate).getTime();
+        lastDay = new Date(this.state.selectedEndDate).getTime();
+        numberOfDays = this.days_between(firstDay, lastDay);
+        this.setState({numberOfDaysForRent: numberOfDays});
+        tP = numberOfDays * this.state.car.Price; 
+        this.setState({totalPrice: tP});
       });
+      
     } else {
       this.setState({
         selectedStartDate: date,
@@ -68,6 +79,18 @@ class CarDetails extends React.Component {
         payButtonDisable: true
       });
     }
+  }
+
+  days_between = (date1, date2) => {
+
+    // The number of milliseconds in one day
+    var ONE_DAY = 1000 * 60 * 60 * 24;
+
+    // Calculate the difference in milliseconds
+    var difference_ms = Math.abs(date1 - date2);
+
+    // Convert back to days and return
+    return Math.round(difference_ms/ONE_DAY) + 1;
   }
 
   render() {
@@ -122,7 +145,7 @@ class CarDetails extends React.Component {
 
             <View style={{ width: 50 + "%" }}>
               <Button
-                title="Pay"
+                title={"Pay " + this.state.totalPrice + " $"}
                 disabled={this.state.payButtonDisable}
                 onPress={() =>
                   this.props.navigation.navigate("Paylink", {
@@ -163,9 +186,9 @@ class CarDetails extends React.Component {
             selectedDayTextColor="#FFFFFF"
             onDateChange={this.onDateChange}
           />
-
+          
           <View style={{ height: 250 }}>
-            <MapViewScreen />
+            <MapViewScreen car={this.state.car}/>
           </View>
         </ScrollView>
       );
