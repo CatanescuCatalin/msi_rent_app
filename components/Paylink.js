@@ -22,11 +22,13 @@ export default class Paylink extends Component {
     const carPar = navigation.getParam("car");
     const selectedStartDate = navigation.getParam("selectedStartDate");
     const selectedEndDate = navigation.getParam("selectedEndDate");
+    const totalPrice = navigation.getParam("totalPrice");
 
     this.setState({
       car: carPar,
       selectedStartDate: selectedStartDate,
-      selectedEndDate: selectedEndDate
+      selectedEndDate: selectedEndDate,
+      totalPrice: totalPrice
     });
   }
 
@@ -43,7 +45,7 @@ export default class Paylink extends Component {
 
   _clickBuy = async () => {
     user = await this._retrieveData();
-    const { selectedEndDate, selectedStartDate } = this.state;
+    const { selectedEndDate, selectedStartDate, totalPrice } = this.state;
 
     fetch(URL_API + "/api/reservCar/" + this.state.car._id, {
       method: "PUT",
@@ -51,7 +53,8 @@ export default class Paylink extends Component {
       body: JSON.stringify({
         user: user,
         selectedEndDate,
-        selectedStartDate
+        selectedStartDate,
+        totalPrice
       })
     }).then(response => {
       if (response.ok) {

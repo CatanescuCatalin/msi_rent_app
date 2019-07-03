@@ -6,9 +6,15 @@ import {
   TouchableOpacity,
   Text,
   AsyncStorage,
-  ActivityIndicator
+  ActivityIndicator,
+  Image
 } from "react-native";
+
+import { Separator, Card, CardItem, Body, DeckSwiper } from "native-base";
+import CalendarPicker from "react-native-calendar-picker";
+
 import StatusBarBackground from "./car_list_screen/StatusBarBackground";
+
 import URL_API from "../config";
 
 const styles = StyleSheet.create({
@@ -26,13 +32,19 @@ const styles = StyleSheet.create({
   profileButton: {
     marginRight: 15,
     marginTop: 20
+  },
+
+  moneyText: {
+    fontSize: 30
   }
 });
 
 class ProfileScreen extends React.Component {
   state = {
     isLoading: true,
-    hasCarReserved: false
+    hasCarReserved: false,
+    car: {_id: 1},
+    user: { TotalSpent: 0, selectedEndDate: 0, selectedStartDate: 0 }
   };
 
   async componentDidMount() {
@@ -60,23 +72,50 @@ class ProfileScreen extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        this.setState({isLoading: false})
-        if(responseJson.car){
-          this.setState({hasCarReserved: true})
+        this.setState({ isLoading: false });
+        if (responseJson.car) {
+          this.setState({ hasCarReserved: true, car: responseJson.car });
         }
-        console.log(responseJson);
-      }); 
+
+        this.setState({ user: responseJson.user[0] });
+      });
   };
 
   render() {
-    if (this.state.isLoading) {
+    const minDate = new Date(this.state.user.selectedStartDate);
+    const maxDate = new Date(this.state.user.selectedEndDate);
 
+
+    var urlImageTitle = URL_API + "/" + this.state.car._id + "/";
+    var auxCards = [
+      {
+        image: { uri: urlImageTitle + "1.jpg" }
+      },
+
+      {
+        image: { uri: urlImageTitle + "2.jpg" }
+      },
+
+      {
+        image: { uri: urlImageTitle + "3.jpg" }
+      },
+
+      {
+        image: { uri: urlImageTitle + "4.jpg" }
+      },
+
+      {
+        image: { uri: urlImageTitle + "5.jpg" }
+      }
+    ];
+
+
+    if (this.state.isLoading) {
       return (
-        <View style={{flex: 1, justifyContent: "center"}}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
       );
-      
     } else {
       return (
         <View>
@@ -102,16 +141,56 @@ class ProfileScreen extends React.Component {
             </View>
           </View>
 
-          { this.state.hasCarReserved ? 
-            <View>
-              <Text>Are Marisa</Text>
-            </View> 
-          : 
-            <View>
-              <Text>Nu ai nicio masina rezervata</Text>
-            </View>
-          }
+          <Card>
+            <CardItem>
+              <Body>
+                <Text style={styles.moneyText}>
+                  Bani chetuiti: {this.state.user.TotalSpent}
+                </Text>
+              </Body>
+            </CardItem>
+          </Card>
 
+          <Separator bordered > 
+                <Text>Masina ta</Text>
+          </Separator>
+
+          {this.state.hasCarReserved ? (
+            <View>
+              <CalendarPicker
+                startFromMonday={true}
+                minDate={minDate}
+                maxDate={maxDate}
+                todayBackgroundColor="#f2e6ff"
+                selectedDayColor="#7300e6"
+                selectedDayTextColor="#FFFFFF"
+              />
+
+              <DeckSwiper
+                dataSource={auxCards}
+                renderItem={item => (
+                  <Card style={{ elevation: 1 }}>
+                    <CardItem cardBody>
+                      <Image
+                        style={{ height: 200, flex: 1 }}
+                        source={item.image}
+                      />
+                    </CardItem>
+                  </Card>
+                )}
+              />
+            </View>
+          ) : (
+            <Card>
+              <CardItem>
+                <Body>
+                  <Text style={styles.moneyText}>
+                    Nu ai nicio masina rezervata
+                  </Text>
+                </Body>
+              </CardItem>
+            </Card>
+          )}
         </View>
       );
     }

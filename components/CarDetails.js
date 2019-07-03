@@ -151,7 +151,8 @@ class CarDetails extends React.Component {
                   this.props.navigation.navigate("Paylink", {
                     car: this.state.car,
                     selectedStartDate: this.state.selectedStartDate,
-                    selectedEndDate: this.state.selectedEndDate
+                    selectedEndDate: this.state.selectedEndDate,
+                    totalPrice: this.state.totalPrice
                   })
                 }
               />
